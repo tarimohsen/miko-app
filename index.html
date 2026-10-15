@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4a5d2e"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><title>میکو آرت استودیو | مدیریت کسب‌وکار</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#efe7d2;--sf:#f8f3e4;--tx:#2b3220;--mu:#6b6f55;--ac:#4a5d2e;--on:#fff;--bd:#d3c8a8;--gn:#3f6b2c;--rd:#a8432f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e2515;--sf:#2a3220;--tx:#ece4cc;--mu:#a9ab8f;--ac:#a3b46b;--on:#1e2515;--bd:#3b4530;--gn:#9bc27a;--rd:#e0836b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e2515;--sf:#2a3220;--tx:#ece4cc;--mu:#a9ab8f;--ac:#a3b46b;--on:#1e2515;--bd:#3b4530;--gn:#9bc27a;--rd:#e0836b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.7 Vazirmatn,Tahoma,sans-serif;max-width:760px;margin:auto}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{padding:14px 14px 4px;display:flex;justify-content:space-between;align-items:center}
+header b{font-size:18px;color:var(--ac)}header small{color:var(--mu)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:8px 10px;border-bottom:1px solid var(--bd)}
+nav button{flex:none;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:20px;padding:5px 13px;font:inherit;cursor:pointer}
+nav button.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
+main{padding:10px 12px 40px}
+h2{font-size:17px;margin:8px 0}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px}
+.k,.c,.f,.box{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.k{display:flex;flex-direction:column}.k b{font-size:17px}
+.c{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.c>div:first-child{flex:1;min-width:180px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.w{grid-column:1/-1}
+label{display:flex;flex-direction:column;font-size:12px;color:var(--mu)}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;width:100%;min-width:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:8px;padding:4px 10px;margin-inline-start:4px}
+button.pri{background:var(--ac);color:var(--on);border-color:var(--ac);padding:8px}
+button.dng{background:var(--rd);color:#fff;border-color:var(--rd)}
+small{color:var(--mu);font-size:12px}.gn{color:var(--gn)}.rd{color:var(--rd)}
+.ac{display:flex;align-items:center;flex-wrap:wrap}
+.ac input{width:64px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:4px;border-bottom:1px solid var(--bd);text-align:right}
+details{margin-top:4px;font-size:13px;color:var(--mu)}
+.ck{flex-direction:row;gap:6px;align-items:center}.ck input{width:auto}
+#pr{display:none}
+@media print{body>*:not(#pr){display:none!important}#pr{display:block;color:#000;background:#fff;padding:20px}}
+</style></head><body>
+<header><b>میکو آرت استودیو</b><span><small id="md"></small> <button onclick="bk()">پشتیبان</button><button onclick="$('#rf').click()">بازیابی</button><input type="file" id="rf" accept=".json" hidden onchange="rs(this)"></span></header>
+<nav id="nav"></nav><main id="main"></main><div id="pr"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const N=v=>+v||0,fm=n=>Math.round(N(n)).toLocaleString('fa-IR'),fd=d=>d?new Date(d).toLocaleDateString('fa-IR'):'';
+const today=()=>new Date().toISOString().slice(0,10);
+const K=['fin','inv','cust','prod','ord','ideas','invc','set'];
+let S={fin:[],inv:[],cust:[],prod:[],ord:[],ideas:[],invc:[],set:{woods:[],rate:0,oh:10,pf:30,waste:10}};
+let db=null,tab='dash',pend='',mode='ذخیره محلی',cur={c:'',d:today(),disc:0,lines:[]};
+const T=[['dash','داشبورد'],['fin','مالی'],['inv','انبار'],['cust','مشتری‌ها'],['prod','محصولات'],['price','قیمت‌گذاری'],['ord','سفارش‌ها'],['bill','فاکتور'],['ideas','ایده‌ها'],['sync','همگام‌سازی']];
+const OS=['جدید','در حال ساخت','آماده','تحویل شد'],IS=['ایده','در حال بررسی','در حال اجرا','انجام شد'];
+const M={
+fin:{q:'amt',f:[['date','تاریخ','date'],['type','نوع',['درآمد','هزینه']],['cat','دسته',['فروش','مواد اولیه','دستمزد','اجاره','ابزار و تجهیزات','تبلیغات','ارسال','خانه و عمومی','سایر']],['amt','مبلغ (تومان)','num'],['note','توضیح']]},
+inv:{q:'name',f:[['name','نام ماده (چوب، پیچ، رنگ...)'],['unit','واحد',['متر مکعب','تخته','کیلوگرم','عدد','لیتر','متر']],['qty','مقدار خرید / موجودی','num'],['price','قیمت خرید هر واحد','num'],['date','تاریخ خرید','date'],['min','حداقل موجودی (هشدار)','num']]},
+cust:{q:'name',f:[['name','نام مشتری'],['phone','شماره تماس'],['note','یادداشت']]},
+prod:{q:'name',f:[['name','نام محصول'],['wood','جنس چوب'],['dim','ابعاد (سانتی‌متر)'],['wv','چوب مصرفی (سانتی‌متر مکعب)','num'],['mats','سایر مواد مصرفی'],['hrs','زمان ساخت (ساعت)','num'],['price','قیمت فروش','num'],['stock','موجودی','num'],['sold','تعداد فروخته‌شده','num'],['method','روش ساخت','area'],['tips','نکات و تکنیک‌ها','area']]},
+ord:{q:'cust',f:[['cust','مشتری'],['item','محصول / سفارش'],['qty','تعداد','num'],['price','مبلغ کل','num'],['due','تاریخ تحویل','date'],['st','وضعیت',OS],['note','توضیح']]},
+ideas:{q:'title',f:[['title','عنوان ایده / برنامه'],['st','وضعیت',IS],['note','توضیح','area']]}};
+function ld(){try{const j=JSON.parse(localStorage.getItem('miko'));if(j)Object.assign(S,j)}catch(e){}}
+function sv(k){try{localStorage.setItem('miko',JSON.stringify(S))}catch(e){}if(window.cloudSave)cloudSave(k)}
+const inp=(k,[n,l,t])=>{const id=k+'_'+n;const e=Array.isArray(t)?`<select id="${id}">${t.map(x=>`<option>${x}</option>`).join('')}</select>`:t=='area'?`<textarea id="${id}" rows="2"></textarea>`:`<input id="${id}" type="${t=='num'?'number':t||'text'}" ${t=='num'?'step="any" inputmode="decimal"':''} ${t=='date'?`value="${today()}"`:''}>`;return `<label class="${t=='area'||n=='note'?'w':''}">${l}${e}</label>`};
+const form=(k,x='')=>`<div class="f">${M[k].f.map(f=>inp(k,f)).join('')}${x}<input type="hidden" id="${k}_eid"><button class="pri w" onclick="${k=='inv'?'sai()':`sa('${k}')`}">ذخیره</button></div>`;
+const card=(k,x,b,ex='')=>`<div class="c"><div>${b}</div><div class="ac">${ex}<button onclick="ed('${k}','${x.id}')">ویرایش</button><button class="${pend==x.id?'dng':''}" onclick="dl('${k}','${x.id}')">${pend==x.id?'مطمئنی؟':'حذف'}</button></div></div>`;
+function sa(k){const o={};M[k].f.forEach(([n,l,t])=>{let v=$('#'+k+'_'+n).value;o[n]=t=='num'?N(v):v});if(!o[M[k].q])return;const id=$('#'+k+'_eid').value;
+if(id){const i=S[k].findIndex(x=>x.id==id);S[k][i]={...S[k][i],...o}}else{o.id=Date.now().toString(36);S[k].push(o)}sv(k);render()}
+function ed(k,id){const x=S[k].find(x=>x.id==id);M[k].f.forEach(([n])=>{const e=$('#'+k+'_'+n);if(e&&x[n]!=null)e.value=x[n]});$('#'+k+'_eid').value=id;$('#'+k+'_eid').scrollIntoView({block:'center'})}
+function dl(k,id){if(pend==id){S[k]=S[k].filter(x=>x.id!=id);pend='';sv(k)}else pend=id;render()}
+function st(k,id,v){S[k].find(x=>x.id==id).st=v;sv(k);render()}
+function go(t){tab=t;pend='';render();scrollTo(0,0)}
+const fs=t=>S.fin.filter(x=>x.type==t).reduce((s,x)=>s+N(x.amt),0);
+const V={};
+V.dash=()=>{const c=new Date(Date.now()-30*864e5).toISOString().slice(0,10),r=S.fin.filter(x=>(x.date||'')>=c),i=r.filter(x=>x.type=='درآمد').reduce((s,x)=>s+N(x.amt),0),e=r.filter(x=>x.type=='هزینه').reduce((s,x)=>s+N(x.amt),0);
+const od=S.ord.filter(o=>o.st!='تحویل شد').sort((a,b)=>(a.due||'').localeCompare(b.due||'')),low=S.inv.filter(x=>N(x.qty)<=N(x.min)),zp=S.prod.filter(p=>N(p.stock)<=0);
+return `<h2>۳۰ روز اخیر</h2><div class="g"><div class="k"><small>درآمد</small><b class="gn">${fm(i)}</b></div><div class="k"><small>هزینه</small><b class="rd">${fm(e)}</b></div><div class="k"><small>سود</small><b>${fm(i-e)}</b></div></div>
+<h2>سفارش‌های باز (${od.length})</h2>${od.slice(0,6).map(o=>`<div class="c"><div><b>${esc(o.cust)}</b> · ${esc(o.item)}<br><small>تحویل: ${fd(o.due)} · ${esc(o.st)}</small></div></div>`).join('')||'<small>سفارش بازی نیست</small>'}
+<h2>هشدار انبار</h2>${low.map(x=>`<div class="c rd">${esc(x.name)}: ${fm(x.qty)} ${esc(x.unit)}</div>`).join('')||'<small>موردی نیست</small>'}
+<h2>محصولات بدون موجودی</h2>${zp.map(p=>`<div class="c">${esc(p.name)}</div>`).join('')||'<small>موردی نیست</small>'}`};
+V.fin=()=>{const i=fs('درآمد'),e=fs('هزینه');return `<h2>حسابداری مالی</h2><div class="g"><div class="k"><small>کل درآمد</small><b class="gn">${fm(i)}</b></div><div class="k"><small>کل هزینه</small><b class="rd">${fm(e)}</b></div><div class="k"><small>تراز</small><b>${fm(i-e)}</b></div></div>`+form('fin')+[...S.fin].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(x=>card('fin',x,`<b class="${x.type=='درآمد'?'gn':'rd'}">${fm(x.amt)}</b> <small>${esc(x.cat)} · ${fd(x.date)}</small><br>${esc(x.note)}`)).join('')};
+V.inv=()=>`<h2>انبار مواد اولیه</h2>`+form('inv','<label class="ck w"><input type="checkbox" id="inv_ex" checked> ثبت خرید به‌عنوان هزینه در حسابداری</label>')+S.inv.map(x=>{const h=x.hist||[],n=h.length,ch=n>1?(h[n-1].p-h[n-2].p)/h[n-2].p*100:0;
+return card('inv',x,`<b>${esc(x.name)}</b> · ${fm(x.qty)} ${esc(x.unit)} ${N(x.qty)<=N(x.min)?'<span class="rd">⚠ کم</span>':''}<br><small>آخرین قیمت: ${fm(x.price)} (${fd(x.date)}) ${n>1?`<span class="${ch>0?'rd':'gn'}">${ch>0?'↑':'↓'}${Math.abs(ch).toFixed(1)}٪</span>`:''}</small><details><summary>تاریخچه قیمت</summary>${h.map(z=>`${fd(z.d)}: ${fm(z.p)}`).join('<br>')}</details>`,`<input id="u_${x.id}" type="number" placeholder="مصرف"><button onclick="us('${x.id}')">مصرف</button>`)}).join('');
+function sai(){const g=n=>$('#inv_'+n).value,nm=g('name').trim();if(!nm)return;const q=N(g('qty')),p=N(g('price')),d=g('date'),id=g('eid');let it=id?S.inv.find(x=>x.id==id):S.inv.find(x=>x.name.trim()==nm);
+if(it){it.qty=id?q:N(it.qty)+q;it.unit=g('unit');it.min=N(g('min'));it.name=nm;if(p&&(!id||p!=it.price)){(it.hist=it.hist||[]).push({d,p});it.price=p;it.date=d}}
+else S.inv.push({id:Date.now().toString(36),name:nm,unit:g('unit'),qty:q,min:N(g('min')),price:p,date:d,hist:p?[{d,p}]:[]});
+if($('#inv_ex').checked&&!id&&q*p>0){S.fin.push({id:Date.now().toString(36)+'x',date:d,type:'هزینه',cat:'مواد اولیه',amt:q*p,note:'خرید '+nm});sv('fin')}sv('inv');render()}
+function us(id){const it=S.inv.find(x=>x.id==id);it.qty=Math.max(0,N(it.qty)-N($('#u_'+id).value));sv('inv');render()}
+V.cust=()=>`<h2>مشتری‌ها</h2>`+form('cust')+S.cust.map(c=>{const b=S.invc.filter(i=>i.cust==c.name),t=b.reduce((s,i)=>s+N(i.total),0);return card('cust',c,`<b>${esc(c.name)}</b> <small dir="ltr">${esc(c.phone)}</small><br><small>${esc(c.note)}</small><details><summary>خریدها (${b.length}) · مجموع ${fm(t)}</summary>${b.map(i=>`#${i.no} ${fd(i.date)}: ${i.lines.map(l=>esc(l.n)+'×'+l.q).join('، ')}`).join('<br>')}</details>`)}).join('');
+V.prod=()=>`<h2>محصولات</h2>`+form('prod')+S.prod.map(p=>card('prod',p,`<b>${esc(p.name)}</b> · ${fm(p.price)} تومان<br><small>${esc(p.wood)} ${esc(p.dim)} · ${fm(p.wv)} cm³ · ${fm(p.hrs)} ساعت<br>موجودی: ${fm(p.stock)} · فروخته: ${fm(p.sold)}</small><details><summary>روش و نکات</summary><b>مواد:</b> ${esc(p.mats)}<br><b>روش:</b> ${esc(p.method)}<br><b>نکات:</b> ${esc(p.tips)}</details>`)).join('');
+V.price=()=>{const s=S.set;return `<h2>تنظیمات قیمت‌گذاری</h2><div class="f"><label>نام چوب<input id="wn"></label><label>قیمت هر متر مکعب<input id="wp" type="number"></label><button class="w" onclick="aw()">افزودن چوب</button>
+${s.woods.map((w,i)=>`<div class="w c">${esc(w.n)}: ${fm(w.p)}<button onclick="dw(${i})">حذف</button></div>`).join('')}
+<label>دستمزد هر ساعت<input id="sr" type="number" value="${s.rate}"></label><label>ضایعات چوب ٪<input id="sw" type="number" value="${s.waste}"></label><label>سربار کارگاه ٪<input id="so" type="number" value="${s.oh}"></label><label>سود ٪<input id="sp" type="number" value="${s.pf}"></label><button class="pri w" onclick="ss()">ذخیره تنظیمات</button></div>
+<h2>محاسبه قیمت</h2><div class="f"><label class="w">جنس چوب<select id="cw">${s.woods.map((w,i)=>`<option value="${i}">${esc(w.n)}</option>`).join('')}</select></label>
+<label>طول (cm)<input id="cl" type="number"></label><label>عرض (cm)<input id="cx" type="number"></label><label>ضخامت (cm)<input id="ct" type="number"></label><label>تعداد قطعه<input id="cq" type="number" value="1"></label><label>سایر هزینه مواد<input id="co" type="number"></label><label>زمان ساخت (ساعت)<input id="ch" type="number"></label><button class="pri w" onclick="calc()">محاسبه</button></div><div class="box" id="res"><small>نتیجه اینجا نمایش داده می‌شود</small></div>
+<small>فرمول: (حجم چوب × قیمت × ضایعات + مواد + ساعت × دستمزد) + سربار، سپس + سود</small>`};
+function aw(){const n=$('#wn').value.trim();if(!n)return;S.set.woods.push({n,p:N($('#wp').value)});sv('set');render()}
+function dw(i){S.set.woods.splice(i,1);sv('set');render()}
+function ss(){const s=S.set;s.rate=N($('#sr').value);s.waste=N($('#sw').value);s.oh=N($('#so').value);s.pf=N($('#sp').value);sv('set');render()}
+function calc(){const s=S.set,w=s.woods[$('#cw').value];if(!w){$('#res').textContent='ابتدا یک نوع چوب اضافه کن';return}
+const v=N($('#cl').value)*N($('#cx').value)*N($('#ct').value)*(N($('#cq').value)||1),wc=v/1e6*N(w.p)*(1+s.waste/100),lab=N($('#ch').value)*N(s.rate),base=wc+N($('#co').value)+lab,oh=base*s.oh/100,cost=base+oh,pr=cost*(1+s.pf/100);
+$('#res').innerHTML=`<table><tr><td>حجم چوب</td><td>${fm(v)} cm³</td></tr><tr><td>هزینه چوب (با ضایعات)</td><td>${fm(wc)}</td></tr><tr><td>دستمزد</td><td>${fm(lab)}</td></tr><tr><td>سربار</td><td>${fm(oh)}</td></tr><tr><td>بهای تمام‌شده</td><td>${fm(cost)}</td></tr><tr><td><b>قیمت فروش پیشنهادی</b></td><td><b class="gn">${fm(Math.round(pr/1000)*1000)}</b></td></tr></table>`}
+V.ord=()=>`<h2>سفارش‌ها و پروژه‌ها</h2>`+form('ord')+[...S.ord].sort((a,b)=>(a.due||'').localeCompare(b.due||'')).map(o=>card('ord',o,`<b>${esc(o.cust)}</b> · ${esc(o.item)} × ${fm(o.qty)}<br><small>تحویل: ${fd(o.due)} · ${fm(o.price)} تومان<br>${esc(o.note)}</small>`,`<select onchange="st('ord','${o.id}',this.value)">${OS.map(x=>`<option ${x==o.st?'selected':''}>${x}</option>`).join('')}</select>`)).join('');
+V.ideas=()=>`<h2>برنامه‌ریزی و ایده‌ها</h2>`+form('ideas')+S.ideas.map(o=>card('ideas',o,`<b>${esc(o.title)}</b><br><small>${esc(o.note)}</small>`,`<select onchange="st('ideas','${o.id}',this.value)">${IS.map(x=>`<option ${x==o.st?'selected':''}>${x}</option>`).join('')}</select>`)).join('');
+const bt=()=>cur.lines.reduce((s,l)=>s+l.q*l.p,0);
+V.bill=()=>`<h2>فاکتورساز</h2><div class="f"><label>مشتری<input list="cl_" value="${esc(cur.c)}" onchange="cur.c=this.value"></label><label>تاریخ<input type="date" value="${cur.d}" onchange="cur.d=this.value"></label><datalist id="cl_">${S.cust.map(c=>`<option value="${esc(c.name)}">`).join('')}</datalist><datalist id="pl_">${S.prod.map(p=>`<option value="${esc(p.name)}">`).join('')}</datalist>
+<label>کالا<input id="ln" list="pl_" onchange="fp()"></label><label>تعداد<input id="lq" type="number" value="1"></label><label>قیمت واحد<input id="lp" type="number"></label><button class="w" onclick="al()">افزودن ردیف</button>
+<div class="w">${cur.lines.map((l,i)=>`<div class="c">${esc(l.n)} × ${l.q} = ${fm(l.q*l.p)}<button onclick="cur.lines.splice(${i},1);render()">✕</button></div>`).join('')}</div>
+<label>تخفیف<input type="number" value="${cur.disc}" onchange="cur.disc=N(this.value);render()"></label><div class="k"><small>جمع کل</small><b>${fm(bt()-cur.disc)}</b></div><button class="pri w" onclick="sb()">ثبت فاکتور</button></div>`+S.invc.slice().reverse().map(i=>card('invc',i,`<b>#${i.no}</b> ${esc(i.cust)} · ${fm(i.total)}<br><small>${fd(i.date)}</small>`,`<button onclick="pf('${i.id}')">چاپ</button>`)).join('');
+function fp(){const p=S.prod.find(x=>x.name==$('#ln').value);if(p)$('#lp').value=p.price}
+function al(){const n=$('#ln').value.trim();if(!n)return;cur.lines.push({n,q:N($('#lq').value)||1,p:N($('#lp').value)});render()}
+function sb(){if(!cur.lines.length)return;const total=bt()-cur.disc,no=1000+S.invc.length+1,d=cur.d,c=cur.c.trim();
+S.invc.push({id:Date.now().toString(36),no,date:d,cust:c,lines:cur.lines,disc:cur.disc,total});
+S.fin.push({id:Date.now().toString(36)+'f',date:d,type:'درآمد',cat:'فروش',amt:total,note:'فاکتور #'+no});
+cur.lines.forEach(l=>{const p=S.prod.find(x=>x.name==l.n);if(p){p.sold=N(p.sold)+l.q;p.stock=Math.max(0,N(p.stock)-l.q)}});
+if(c&&!S.cust.some(x=>x.name==c)){S.cust.push({id:Date.now().toString(36)+'c',name:c,phone:'',note:''});sv('cust')}
+['invc','fin','prod'].forEach(sv);cur={c:'',d:today(),disc:0,lines:[]};render()}
+function pf(id){const i=S.invc.find(x=>x.id==id);$('#pr').innerHTML=`<h2>Miko Art Studio</h2><p>فاکتور #${i.no} · ${fd(i.date)}<br>مشتری: ${esc(i.cust)}</p><table><tr><th>کالا</th><th>تعداد</th><th>قیمت</th><th>جمع</th></tr>${i.lines.map(l=>`<tr><td>${esc(l.n)}</td><td>${l.q}</td><td>${fm(l.p)}</td><td>${fm(l.q*l.p)}</td></tr>`).join('')}</table><p>تخفیف: ${fm(i.disc)}<br><b>مبلغ قابل پرداخت: ${fm(i.total)} تومان</b></p>`;try{print()}catch(e){}}
+function render(){$('#md').textContent=mode;$('#nav').innerHTML=T.map(([k,l])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');$('#main').innerHTML=(V[tab]||V.invc)()}
+function V_(){}V.invc=V.bill;
+ld();render();
+function bk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='miko-backup-'+today()+'.json';a.click()}
+function rs(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{Object.assign(S,JSON.parse(r.result));sv('fin');render()}catch(e){alert('فایل معتبر نیست')}};r.readAsText(f)}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+
+let cloudMsg='متصل نیست (ذخیره محلی)',fs_=null,F_=null,shadow={},ready=0,att=0,first={};
+const CA=['fin','inv','cust','prod','ord','ideas','invc'],ok=()=>{};
+V.sync=()=>`<h2>همگام‌سازی ابری</h2><div class="f"><div class="w box">وضعیت: <b>${esc(cloudMsg)}</b></div><label class="w">تنظیمات Firebase (متن firebaseConfig)<textarea id="sc_cfg" rows="6" dir="ltr">${esc(localStorage.getItem('mikoCfgTxt')||'')}</textarea></label><label>ایمیل<input id="sc_em" type="email" dir="ltr"></label><label>رمز عبور<input id="sc_pw" type="password" dir="ltr"></label><button class="pri w" onclick="cn()">اتصال</button></div><small>فقط یک بار لازم است؛ بعد از اتصال، ورود روی گوشی ذخیره می‌شود.</small>`;
+function cn(){const t=$('#sc_cfg').value,c={};[...t.matchAll(/(\w+)\s*:\s*["']([^"']+)["']/g)].forEach(m=>c[m[1]]=m[2]);
+if(!c.apiKey||!c.projectId){cloudMsg='تنظیمات نامعتبر است';render();return}
+localStorage.setItem('mikoCfg',JSON.stringify(c));localStorage.setItem('mikoCfgTxt',t);cloud(c,$('#sc_em').value.trim(),$('#sc_pw').value)}
+const ui=()=>{try{localStorage.setItem('miko',JSON.stringify(S))}catch(e){}const a=document.activeElement;if(!a||!/INPUT|SELECT|TEXTAREA/.test(a.tagName))render()};
+async function cloud(cfg,em,pw){try{cloudMsg='در حال اتصال...';render();
+const B='https://www.gstatic.com/firebasejs/12.13.0/',[A,F,U]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-firestore.js'),import(B+'firebase-auth.js')]);
+const app=A.getApps().length?A.getApp():A.initializeApp(cfg);
+if(!F_){F_=F;fs_=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}
+const au=U.getAuth(app);if(em)await U.signInWithEmailAndPassword(au,em,pw);
+if(!att){att=1;U.onAuthStateChanged(au,u=>{if(u)attach();else{cloudMsg='ورود لازم است: ایمیل و رمز را وارد کن';render()}})}
+}catch(e){cloudMsg='خطا: '+(e.code||e.message);render()}}
+function attach(){if(ready)return;ready=1;const F=F_,loc=JSON.parse(localStorage.getItem('miko')||'{}'),mig=!localStorage.getItem('mikoSynced');let n=0;
+CA.forEach(k=>F.onSnapshot(F.collection(fs_,k),sn=>{const a=[];sn.forEach(d=>a.push(d.data()));
+if(mig&&!first[k])(loc[k]||[]).forEach(x=>{if(!a.some(y=>y.id==x.id)){a.push(x);F.setDoc(F.doc(fs_,k,x.id),JSON.parse(JSON.stringify(x))).catch(ok)}});
+if(!first[k]){first[k]=1;if(++n==CA.length)localStorage.setItem('mikoSynced','1')}
+a.sort((x,y)=>x.id<y.id?-1:x.id>y.id?1:0);S[k]=a;shadow[k]=Object.fromEntries(a.map(x=>[x.id,JSON.stringify(x)]));ui()},e=>{cloudMsg='خطا: '+(e.code||e.message);render()}));
+F.onSnapshot(F.doc(fs_,'cfg','main'),d=>{if(d.exists())S.set=d.data().v;else if(mig&&loc.set&&loc.set.woods&&loc.set.woods.length){S.set=loc.set;F.setDoc(F.doc(fs_,'cfg','main'),{v:S.set}).catch(ok)}ui()});
+window.cloudSave=cs;cloudMsg='متصل ✓ همگام‌سازی خودکار فعال است';mode='ابری ✓';ui()}
+function cs(k){const F=F_;if(k=='set'){F.setDoc(F.doc(fs_,'cfg','main'),{v:JSON.parse(JSON.stringify(S.set))}).catch(ok);return}
+const sh=shadow[k]||{},cu={};S[k].forEach(x=>{const j=JSON.stringify(x);cu[x.id]=j;if(sh[x.id]!=j)F.setDoc(F.doc(fs_,k,x.id),JSON.parse(j)).catch(ok)});
+Object.keys(sh).forEach(i=>{if(!(i in cu))F.deleteDoc(F.doc(fs_,k,i)).catch(ok)});shadow[k]=cu}
+try{const c=JSON.parse(localStorage.getItem('mikoCfg')||'null');if(c)cloud(c,'','')}catch(e){}
+</script></body></html>
