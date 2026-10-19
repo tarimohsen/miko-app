@@ -1,4 +1,4 @@
-const C='miko-v14',A=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
+const C='miko-v16',A=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(A)))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!=C).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 const put=(r,x)=>{if(x&&x.ok){const y=x.clone();caches.open(C).then(c=>c.put(r,y))}return x};
